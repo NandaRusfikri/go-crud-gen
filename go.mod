@@ -1,4 +1,4 @@
-module go-crud-gen
+module github.com/NandaRusfikri/go-crud-gen
 
 go 1.22.0
 

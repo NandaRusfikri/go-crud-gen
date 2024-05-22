@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	generate2 "go-crud-gen"
+	gen "github.com/NandaRusfikri/go-crud-gen"
 	"log"
 	"os"
 	"strings"
@@ -19,7 +19,7 @@ func main() {
 
 	moduleNameRoot := getModuleNameRoot()
 
-	err := generate2.Generate(*moduleName, moduleNameRoot, *outputDir)
+	err := gen.Generate(*moduleName, moduleNameRoot, *outputDir)
 	if err != nil {
 		log.Fatalf("Error generating module: %v", err)
 	}
