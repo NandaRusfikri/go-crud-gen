@@ -9,9 +9,8 @@ import (
 	"text/template"
 )
 
-func Generate(moduleName, moduleNameRoot, outputDir string) error {
+func Generate(moduleName, outputDir string) error {
 	templates := map[string]string{
-
 		"repo_model":  "templates/repository/db/model/model.go.tpl",
 		"repo_init":   "templates/repository/db/module/impl/init.go.tpl",
 		"repo_iface":  "templates/repository/db/module/interface.go.tpl",
@@ -20,19 +19,13 @@ func Generate(moduleName, moduleNameRoot, outputDir string) error {
 		"repo_delete": "templates/repository/db/module/impl/delete.go.tpl",
 		"repo_get":    "templates/repository/db/module/impl/get.go.tpl",
 
-		//"usecase_get":    "templates/usecase/module/impl/get.go.tpl",
 		"usecase_model":  "templates/usecase/model/model.go.tpl",
 		"usecase_init":   "templates/usecase/module/impl/init.go.tpl",
 		"usecase_iface":  "templates/usecase/module/interface.go.tpl",
 		"usecase_create": "templates/usecase/module/impl/create.go.tpl",
-		//"usecase_update": "templates/usecase/module/impl/update.go.tpl",
-		//"usecase_delete": "templates/usecase/module/impl/delete.go.tpl",
-
-		//"repo_update":    "templates/repository/db/module/impl/update.go.tpl",
-		//"repo_delete":    "templates/repository/db/module/impl/delete.go.tpl",
-		//"repo_get":       "templates/repository/db/module/impl/get.go.tpl",
-
 	}
+
+	moduleNameRoot := GetModuleNameRoot()
 
 	for kind, tmplFile := range templates {
 		fmt.Printf("kind:%s , tmplFile:%s\n", kind, tmplFile)
