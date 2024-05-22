@@ -1,0 +1,16 @@
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.env
+
+bin/*
+logs/*
+tmp/*
+vendor/*
+
+.vscode/
+.idea/
+internal
