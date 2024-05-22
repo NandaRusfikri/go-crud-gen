@@ -2,12 +2,16 @@ package go_crud_gen
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
 )
+
+//go:embed templates/*
+var templates embed.FS
 
 func Generate(moduleName, outputDir string) error {
 	templates := map[string]string{
