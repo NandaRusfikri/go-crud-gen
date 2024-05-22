@@ -1,7 +1,7 @@
 package impl
 
 import (
-	uUser "go-crud-gen/internal/usecase/user"
+	u{{.ModuleName}} "{{.ModuleNameRoot}}/internal/usecase/{{.ModuleNameLower}}"
 	"{{.ModuleNameRoot}}/internal/repository/db/{{.ModuleNameLower}}"
 )
 

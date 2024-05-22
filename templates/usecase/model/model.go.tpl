@@ -1,9 +1,8 @@
 package model
 
-
 type (
 	{{.ModuleName}} struct {
-		ID      string
+		ID      uint64
 		Name      string
 	}
 	Get{{.ModuleName}}Request struct {
@@ -13,10 +12,10 @@ type (
 		OrderField string
 	}
 	Update{{.ModuleName}}Request struct {
+	    ID uint64
 		Name string
 	}
 	Create{{.ModuleName}}Request struct {
-        ID string
 		Name string
     }
 )

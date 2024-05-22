@@ -3,12 +3,12 @@ package impl
 import (
 	"context"
 	"{{.ModuleNameRoot}}/internal/usecase/model"
-	dbmodel "{{.ModuleNameRoot}}/internal/repository/db/model"
+	dbModel "{{.ModuleNameRoot}}/internal/repository/db/model"
 )
 
-func (u usecase) Create(ctx context.Context, req *model.Create{{.ModuleName}}Request) error {
+func (u *usecase) Create(ctx context.Context, req *model.Create{{.ModuleName}}Request) error {
 
-    data := dbmodel.Table{{.ModuleName}}{
+    data := dbModel.Table{{.ModuleName}}{
         Name: req.Name,
     }
     return u.{{.ModuleNameLower}}Repository.Create(ctx, &data)

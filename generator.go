@@ -1,7 +1,6 @@
 package go_crud_gen
 
 import (
-	"bytes"
 	"embed"
 	"fmt"
 	"os"
@@ -27,6 +26,9 @@ func Generate(moduleName, outputDir string) error {
 		"usecase_init":   "templates/usecase/module/impl/init.go.tpl",
 		"usecase_iface":  "templates/usecase/module/interface.go.tpl",
 		"usecase_create": "templates/usecase/module/impl/create.go.tpl",
+		"usecase_update": "templates/usecase/module/impl/update.go.tpl",
+		"usecase_delete": "templates/usecase/module/impl/delete.go.tpl",
+		"usecase_get":    "templates/usecase/module/impl/get.go.tpl",
 	}
 
 	moduleNameRoot := GetModuleNameRoot()
@@ -43,54 +45,69 @@ func Generate(moduleName, outputDir string) error {
 }
 
 func generateFile(moduleName, moduleNameRoot, tmplFile, kind, outputDir string) error {
-	tmplPath := filepath.Join(tmplFile)
-	tmpl, err := template.ParseFiles(tmplPath)
+	tmpl, err := template.ParseFS(templates, tmplFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse template: %w", err)
 	}
+
+	outputFile := getOutputFilePath(kind, moduleName, outputDir)
+	outputDirPath := filepath.Dir(outputFile)
+	err = os.MkdirAll(outputDirPath, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	f, err := os.Create(outputFile)
+	if err != nil {
+		return fmt.Errorf("failed to create output file: %w", err)
+	}
+	defer f.Close()
 
 	data := map[string]string{
 		"ModuleName":      moduleName,
-		"ModuleNameLower": strings.ToLower(moduleName),
 		"ModuleNameRoot":  moduleNameRoot,
+		"ModuleNameLower": strings.ToLower(moduleName),
 	}
 
-	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, data); err != nil {
-		return err
+	err = tmpl.Execute(f, data)
+	if err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	// Determine the output directory based on the kind of template
+	return nil
+}
+
+func getOutputFilePath(kind, moduleName, outputDir string) string {
 	var outputFile string
-	if strings.HasPrefix(kind, "repo_model") {
+	switch kind {
+	case "repo_model":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", "model", strings.ToLower(moduleName)+".go")
-	} else if strings.HasPrefix(kind, "repo_init") {
+	case "repo_init":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "init.go")
-	} else if strings.HasPrefix(kind, "repo_iface") {
+	case "repo_iface":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
-	} else if strings.HasPrefix(kind, "repo_create") {
+	case "repo_create":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "create.go")
-	} else if strings.HasPrefix(kind, "repo_update") {
+	case "repo_update":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "update.go")
-	} else if strings.HasPrefix(kind, "repo_delete") {
+	case "repo_delete":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "delete.go")
-	} else if strings.HasPrefix(kind, "repo_get") {
+	case "repo_get":
 		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "get.go")
-	}
-
-	if strings.HasPrefix(kind, "usecase_model") {
+	case "usecase_model":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", "model", strings.ToLower(moduleName)+".go")
-	} else if strings.HasPrefix(kind, "usecase_init") {
+	case "usecase_init":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "init.go")
-	} else if strings.HasPrefix(kind, "usecase_iface") {
+	case "usecase_iface":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
-	} else if strings.HasPrefix(kind, "usecase_create") {
+	case "usecase_create":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "create.go")
+	case "usecase_update":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "update.go")
+	case "usecase_delete":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "delete.go")
+	case "usecase_get":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "get.go")
 	}
-
-	if err := os.MkdirAll(filepath.Dir(outputFile), 0755); err != nil {
-		return err
-	}
-
-	return os.WriteFile(outputFile, buf.Bytes(), 0644)
+	return outputFile
 }

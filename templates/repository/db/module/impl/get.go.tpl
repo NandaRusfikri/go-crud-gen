@@ -9,7 +9,7 @@ import (
 	"{{.ModuleNameRoot}}/internal/repository/db/model"
 )
 
-func (r *repository) GetByID(ctx context.Context, id int64) (model.Table{{.ModuleName}}, error) {
+func (r *repository) GetByID(ctx context.Context, id uint64) (model.Table{{.ModuleName}}, error) {
 	res := model.Table{{.ModuleName}}{}
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&res).Error
 	if err != nil {
