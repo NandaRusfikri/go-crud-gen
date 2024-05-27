@@ -2,7 +2,7 @@ package impl
 
 import (
 	"context"
-	"{{.ModuleNameRoot}}/internal/repository/db/model"
+	"{{.ModuleNameRoot}}/internal/outbound/model"
 )
 
 func (r *repository) Update(ctx context.Context, req model.Table{{.ModuleName}}) (model.Table{{.ModuleName}}, error) {

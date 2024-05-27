@@ -2,7 +2,7 @@ package impl
 
 import (
 	u{{.ModuleName}} "{{.ModuleNameRoot}}/internal/usecase/{{.ModuleNameLower}}"
-	"{{.ModuleNameRoot}}/internal/repository/db/{{.ModuleNameLower}}"
+	"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
 )
 
 type usecase struct {

@@ -2,12 +2,12 @@ package impl
 
 import (
 	"context"
-	"{{.ModuleNameRoot}}/internal/usecase/model"
-	dbModel "{{.ModuleNameRoot}}/internal/repository/db/model"
+	omodel "{{.ModuleNameRoot}}/internal/outbound/model"
+	umodel "{{.ModuleNameRoot}}/internal/usecase/model"
 )
 
-func (u *usecase) Update(ctx context.Context, req *model.Update{{.ModuleName}}Request) error {
-	data := dbModel.Table{{.ModuleName}}{
+func (u *usecase) Update(ctx context.Context, req *umodel.Update{{.ModuleName}}Request) error {
+	data := omodel.Table{{.ModuleName}}{
 		ID:   req.ID,
 		Name: req.Name, // Add more fields as needed
 	}

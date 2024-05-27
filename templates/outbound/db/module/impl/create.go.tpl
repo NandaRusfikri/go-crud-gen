@@ -2,7 +2,7 @@ package impl
 
 import (
 	"context"
-	"{{.ModuleNameRoot}}/internal/repository/db/model"
+	"{{.ModuleNameRoot}}/internal/outbound/model"
 
 )
 

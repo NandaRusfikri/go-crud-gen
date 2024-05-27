@@ -14,13 +14,13 @@ var templates embed.FS
 
 func Generate(moduleName, outputDir string) error {
 	templates := map[string]string{
-		"repo_model":  "templates/repository/db/model/model.go.tpl",
-		"repo_init":   "templates/repository/db/module/impl/init.go.tpl",
-		"repo_iface":  "templates/repository/db/module/interface.go.tpl",
-		"repo_create": "templates/repository/db/module/impl/create.go.tpl",
-		"repo_update": "templates/repository/db/module/impl/update.go.tpl",
-		"repo_delete": "templates/repository/db/module/impl/delete.go.tpl",
-		"repo_get":    "templates/repository/db/module/impl/get.go.tpl",
+		"repo_model":  "templates/outbound/model/model.go.tpl",
+		"repo_init":   "templates/outbound/db/module/impl/init.go.tpl",
+		"repo_iface":  "templates/outbound/db/module/interface.go.tpl",
+		"repo_create": "templates/outbound/db/module/impl/create.go.tpl",
+		"repo_update": "templates/outbound/db/module/impl/update.go.tpl",
+		"repo_delete": "templates/outbound/db/module/impl/delete.go.tpl",
+		"repo_get":    "templates/outbound/db/module/impl/get.go.tpl",
 
 		"usecase_model":  "templates/usecase/model/model.go.tpl",
 		"usecase_init":   "templates/usecase/module/impl/init.go.tpl",
@@ -81,19 +81,19 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 	var outputFile string
 	switch kind {
 	case "repo_model":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", "model", strings.ToLower(moduleName)+".go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "model", strings.ToLower(moduleName)+".go")
 	case "repo_init":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "init.go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "init.go")
 	case "repo_iface":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
 	case "repo_create":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "create.go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "create.go")
 	case "repo_update":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "update.go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "update.go")
 	case "repo_delete":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "delete.go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "delete.go")
 	case "repo_get":
-		outputFile = filepath.Join(outputDir, "internal", "repository", "db", strings.ToLower(moduleName), "impl", "get.go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "get.go")
 	case "usecase_model":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", "model", strings.ToLower(moduleName)+".go")
 	case "usecase_init":

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"errors"
 	"gorm.io/gorm"
-	"{{.ModuleNameRoot}}/internal/repository/db/model"
+	"{{.ModuleNameRoot}}/internal/outbound/model"
 )
 
 func (r *repository) GetByID(ctx context.Context, id uint64) (model.Table{{.ModuleName}}, error) {

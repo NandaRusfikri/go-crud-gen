@@ -2,7 +2,7 @@ package impl
 
 import (
 	"gorm.io/gorm"
-	"{{.ModuleNameRoot}}/internal/repository/db/{{.ModuleNameLower}}"
+	"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
 )
 
 type repository struct {
