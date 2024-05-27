@@ -14,13 +14,20 @@ var templates embed.FS
 
 func Generate(moduleName, outputDir string) error {
 	templates := map[string]string{
-		"repo_model":  "templates/outbound/model/model.go.tpl",
-		"repo_init":   "templates/outbound/db/module/impl/init.go.tpl",
-		"repo_iface":  "templates/outbound/db/module/interface.go.tpl",
+		"repo_model": "templates/outbound/model/model.go.tpl",
+		"repo_init":  "templates/outbound/db/module/impl/init.go.tpl",
+		"repo_iface": "templates/outbound/db/module/interface.go.tpl",
+
 		"repo_create": "templates/outbound/db/module/impl/create.go.tpl",
 		"repo_update": "templates/outbound/db/module/impl/update.go.tpl",
 		"repo_delete": "templates/outbound/db/module/impl/delete.go.tpl",
 		"repo_get":    "templates/outbound/db/module/impl/get.go.tpl",
+
+		"repo_mock_iface":  "templates/outbound/db/module/mock_interface.go.tpl",
+		"repo_create_test": "templates/outbound/db/module/impl/create_test.go.tpl",
+		"repo_delete_test": "templates/outbound/db/module/impl/delete_test.go.tpl",
+		"repo_get_test":    "templates/outbound/db/module/impl/get_test.go.tpl",
+		"repo_update_test": "templates/outbound/db/module/impl/update_test.go.tpl",
 
 		"usecase_model":  "templates/usecase/model/model.go.tpl",
 		"usecase_init":   "templates/usecase/module/impl/init.go.tpl",
@@ -85,7 +92,7 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 	case "repo_init":
 		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "init.go")
 	case "repo_iface":
-		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "repository.go")
 	case "repo_create":
 		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "create.go")
 	case "repo_update":
@@ -99,7 +106,7 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 	case "usecase_init":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "init.go")
 	case "usecase_iface":
-		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), strings.ToLower(moduleName)+".go")
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "usecase.go")
 	case "usecase_create":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "create.go")
 	case "usecase_update":
@@ -108,6 +115,17 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "delete.go")
 	case "usecase_get":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "get.go")
+	case "repo_mock_iface":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "mock_repository.go")
+	case "repo_create_test":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "create_test.go")
+	case "repo_delete_test":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "delete_test.go")
+	case "repo_get_test":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "get_test.go")
+	case "repo_update_test":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "update_test.go")
+
 	}
 	return outputFile
 }

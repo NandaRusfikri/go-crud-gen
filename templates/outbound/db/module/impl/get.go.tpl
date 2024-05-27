@@ -7,9 +7,12 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"{{.ModuleNameRoot}}/internal/outbound/model"
+	pkgHelper "{{.ModuleNameRoot}}/pkg/helper"
 )
 
 func (r *repository) GetByID(ctx context.Context, id uint64) (model.Table{{.ModuleName}}, error) {
+    span, ctx := pkgHelper.UpdateCtxSpanRepository(ctx)
+	defer span.End()
 	res := model.Table{{.ModuleName}}{}
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&res).Error
 	if err != nil {
@@ -19,6 +22,8 @@ func (r *repository) GetByID(ctx context.Context, id uint64) (model.Table{{.Modu
 }
 
 func (r *repository) GetList(ctx context.Context, request model.GetList{{.ModuleName}}Request) (list []model.Table{{.ModuleName}}, count int64, err error) {
+    span, ctx := pkgHelper.UpdateCtxSpanRepository(ctx)
+	defer span.End()
 	var params []interface{}
 	var limitOffset, orderByQuery string
 	Select := fmt.Sprintf("SELECT id, module, feature FROM {{.ModuleNameLower}} ")

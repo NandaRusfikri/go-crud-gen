@@ -4,9 +4,12 @@ import (
 	"context"
 	omodel "{{.ModuleNameRoot}}/internal/outbound/model"
 	umodel "{{.ModuleNameRoot}}/internal/usecase/model"
+	pkgHelper "{{.ModuleNameRoot}}/pkg/helper"
 )
 
 func (u *usecase) GetByID(ctx context.Context, id uint64) (umodel.{{.ModuleName}}, error) {
+    span, ctx := pkgHelper.UpdateCtxSpanUsecase(ctx)
+    defer span.End()
 	data, err := u.{{.ModuleNameLower}}Repository.GetByID(ctx, id)
 	if err != nil {
 		return umodel.{{.ModuleName}}{}, err
@@ -18,6 +21,8 @@ func (u *usecase) GetByID(ctx context.Context, id uint64) (umodel.{{.ModuleName}
 }
 
 func (u *usecase) GetList(ctx context.Context, req umodel.Get{{.ModuleName}}Request) ([]umodel.{{.ModuleName}}, error) {
+    span, ctx := pkgHelper.UpdateCtxSpanUsecase(ctx)
+    defer span.End()
 	data, _, err := u.{{.ModuleNameLower}}Repository.GetList(ctx, omodel.GetList{{.ModuleName}}Request{
         Page: req.Page,
         Limit: req.Limit,
