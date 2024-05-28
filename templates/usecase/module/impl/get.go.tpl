@@ -20,24 +20,29 @@ func (u *usecase) GetByID(ctx context.Context, id uint64) (umodel.{{.ModuleName}
 	}, nil
 }
 
-func (u *usecase) GetList(ctx context.Context, req umodel.Get{{.ModuleName}}Request) ([]umodel.{{.ModuleName}}, error) {
+func (u *usecase) GetList(ctx context.Context, req umodel.Get{{.ModuleName}}Request) (umodel.List{{.ModuleName}}Response, error) {
     span, ctx := pkgHelper.UpdateCtxSpanUsecase(ctx)
     defer span.End()
-	data, _, err := u.{{.ModuleNameLower}}Repository.GetList(ctx, omodel.GetList{{.ModuleName}}Request{
+	data, count, err := u.{{.ModuleNameLower}}Repository.GetList(ctx, omodel.GetList{{.ModuleName}}Request{
         Page: req.Page,
         Limit: req.Limit,
         Search: req.Search,
         OrderField: req.OrderField,
     })
 	if err != nil {
-		return nil, err
+		return umodel.List{{.ModuleName}}Response{}, err
 	}
-	var response []umodel.{{.ModuleName}}
+	var list []umodel.{{.ModuleName}}
 	for _, d := range data {
-		response = append(response, umodel.{{.ModuleName}}{
+		list = append(list, umodel.{{.ModuleName}}{
 			ID:   d.ID,
 			Name: d.Name, // Add more fields as needed
 		})
 	}
-	return response, nil
+	return umodel.List{{.ModuleName}}Response{
+	    PageTotal:   0,
+        PageCurrent: 0,
+        Count:       count,
+        Users:       list,
+	}, nil
 }

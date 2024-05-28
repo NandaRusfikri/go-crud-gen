@@ -14,15 +14,15 @@ var templates embed.FS
 
 func Generate(moduleName, outputDir string) error {
 	templates := map[string]string{
-		"repo_model": "templates/outbound/model/model.go.tpl",
-		"repo_init":  "templates/outbound/db/module/impl/init.go.tpl",
-		"repo_iface": "templates/outbound/db/module/interface.go.tpl",
-
+		"repo_model":  "templates/outbound/model/model.go.tpl",
+		"repo_init":   "templates/outbound/db/module/impl/init.go.tpl",
+		"repo_iface":  "templates/outbound/db/module/interface.go.tpl",
 		"repo_create": "templates/outbound/db/module/impl/create.go.tpl",
 		"repo_update": "templates/outbound/db/module/impl/update.go.tpl",
 		"repo_delete": "templates/outbound/db/module/impl/delete.go.tpl",
 		"repo_get":    "templates/outbound/db/module/impl/get.go.tpl",
 
+		"repo_init_test":   "templates/outbound/db/module/impl/init_test.go.tpl",
 		"repo_mock_iface":  "templates/outbound/db/module/mock_interface.go.tpl",
 		"repo_create_test": "templates/outbound/db/module/impl/create_test.go.tpl",
 		"repo_delete_test": "templates/outbound/db/module/impl/delete_test.go.tpl",
@@ -36,6 +36,9 @@ func Generate(moduleName, outputDir string) error {
 		"usecase_update": "templates/usecase/module/impl/update.go.tpl",
 		"usecase_delete": "templates/usecase/module/impl/delete.go.tpl",
 		"usecase_get":    "templates/usecase/module/impl/get.go.tpl",
+
+		"usecase_create_test": "templates/usecase/module/impl/create_test.go.tpl",
+		"usecase_get_test":    "templates/usecase/module/impl/get_test.go.tpl",
 	}
 
 	moduleNameRoot := GetModuleNameRoot()
@@ -115,6 +118,8 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "delete.go")
 	case "usecase_get":
 		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "get.go")
+	case "repo_init_test":
+		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "init_test.go")
 	case "repo_mock_iface":
 		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "mock_repository.go")
 	case "repo_create_test":
@@ -125,6 +130,14 @@ func getOutputFilePath(kind, moduleName, outputDir string) string {
 		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "get_test.go")
 	case "repo_update_test":
 		outputFile = filepath.Join(outputDir, "internal", "outbound", "db", strings.ToLower(moduleName), "impl", "update_test.go")
+	case "usecase_create_test":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "create_test.go")
+	case "usecase_update_test":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "update_test.go")
+	case "usecase_delete_test":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "delete_test.go")
+	case "usecase_get_test":
+		outputFile = filepath.Join(outputDir, "internal", "usecase", strings.ToLower(moduleName), "impl", "get_test.go")
 
 	}
 	return outputFile

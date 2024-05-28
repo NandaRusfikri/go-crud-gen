@@ -59,3 +59,4 @@ func (r *repository) GetList(ctx context.Context, request model.GetList{{.Module
 
 	return
 }
+

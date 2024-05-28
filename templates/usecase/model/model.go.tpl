@@ -18,4 +18,11 @@ type (
 	Create{{.ModuleName}}Request struct {
 		Name string
     }
+
+    List{{.ModuleName}}Response struct {
+    	Count       int64
+    	PageCurrent int
+    	PageTotal   int
+    	{{.ModuleName}}s       []{{.ModuleName}}
+    }
 )

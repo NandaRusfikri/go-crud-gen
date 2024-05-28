@@ -16,40 +16,40 @@ func TestUpdate(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		input       model.TableTask
-		setupMock   func(m *mockrepo.MockTaskRepository)
-		expected    model.TableTask
+		input       model.Table{{.ModuleName}}
+		setupMock   func(m *mockrepo.Mock{{.ModuleName}}Repository)
+		expected    model.Table{{.ModuleName}}
 		expectedErr error
 	}{
 		{
 			name: "Positive case",
-			input: model.TableTask{
+			input: model.Table{{.ModuleName}}{
 				ID:   1,
-				Name: "Updated Task",
+				Name: "Updated {{.ModuleName}}",
 			},
-			setupMock: func(m *mockrepo.MockTaskRepository) {
-				m.On("Update", mock.Anything, mock.AnythingOfType("model.TableTask")).Return(model.TableTask{ID: 1, Name: "Updated Task"}, nil)
+			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
+				m.On("Update", mock.Anything, mock.AnythingOfType("model.Table{{.ModuleName}}")).Return(model.Table{{.ModuleName}}{ID: 1, Name: "Updated {{.ModuleName}}"}, nil)
 			},
-			expected:    model.TableTask{ID: 1, Name: "Updated Task"},
+			expected:    model.Table{{.ModuleName}}{ID: 1, Name: "Updated {{.ModuleName}}"},
 			expectedErr: nil,
 		},
 		{
 			name: "Negative case with database error",
-			input: model.TableTask{
+			input: model.Table{{.ModuleName}}{
 				ID:   1,
-				Name: "Updated Task",
+				Name: "Updated {{.ModuleName}}",
 			},
-			setupMock: func(m *mockrepo.MockTaskRepository) {
-				m.On("Update", mock.Anything, mock.AnythingOfType("model.TableTask")).Return(model.TableTask{}, errors.New("database error"))
+			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
+				m.On("Update", mock.Anything, mock.AnythingOfType("model.Table{{.ModuleName}}")).Return(model.Table{{.ModuleName}}{}, errors.New("database error"))
 			},
-			expected:    model.TableTask{},
+			expected:    model.Table{{.ModuleName}}{},
 			expectedErr: errors.New("database error"),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(mockrepo.MockTaskRepository)
+			mockRepo := new(mockrepo.Mock{{.ModuleName}}Repository)
 			tt.setupMock(mockRepo)
 
 			res, err := mockRepo.Update(ctx, tt.input)
