@@ -3,13 +3,12 @@ package impl
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 	"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
+	"{{.ModuleNameRoot}}/pkg/resource/model"
 )
 
 func TestNew(t *testing.T) {
-	db := &gorm.DB{}
-	repo := New(db)
+	repo := New(model.Database{})
 	assert.NotNil(t, repo)
 	_, ok := repo.({{.ModuleNameLower}}.Repository)
 	assert.True(t, ok)

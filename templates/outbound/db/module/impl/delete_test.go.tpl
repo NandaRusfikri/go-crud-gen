@@ -3,35 +3,51 @@ package impl
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	mockrepo"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
+	"github.com/DATA-DOG/go-sqlmock"
+	"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
+	rmodel "{{.ModuleNameRoot}}/pkg/resource/model"
 )
 
 func TestDelete(t *testing.T) {
-	ctx := context.Background()
+	sqlDB, db, mock := {{.ModuleNameLower}}.DbMock(t)
+	defer sqlDB.Close()
+	implObj := New(rmodel.Database{
+		Template: db,
+	})
 
 	tests := []struct {
-		name        string
-		id          uint64
-		setupMock   func(m *mockrepo.Mock{{.ModuleName}}Repository)
-		expectedErr error
+		name         string
+		id           uint64
+		mockBehavior func(sqlmock.Sqlmock)
+		expectedErr  error
 	}{
 		{
 			name: "Positive case",
 			id:   1,
-			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
-				m.On("Delete", mock.Anything, uint64(1)).Return(nil)
+			mockBehavior: func(mock sqlmock.Sqlmock) {
+				delSQL := `UPDATE "{{.ModuleNameLower}}" SET "deleted_at"=\$1 WHERE "id"=\$2 AND "{{.ModuleNameLower}}"."deleted_at" IS NULL`
+				mock.ExpectBegin()
+				mock.ExpectExec(delSQL).
+					WithArgs(sqlmock.AnyArg(), 1).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "Negative case with database error",
 			id:   1,
-			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
-				m.On("Delete", mock.Anything, uint64(1)).Return(errors.New("database error"))
+			mockBehavior: func(mock sqlmock.Sqlmock) {
+				delSQL := `UPDATE "{{.ModuleNameLower}}" SET "deleted_at"=\$1 WHERE "id"=\$2 AND "{{.ModuleNameLower}}"."deleted_at" IS NULL`
+				mock.ExpectBegin()
+				mock.ExpectExec(delSQL).
+					WithArgs(sqlmock.AnyArg(), 1).
+					WillReturnError(fmt.Errorf("delete failed"))
+				mock.ExpectRollback()
 			},
 			expectedErr: errors.New("database error"),
 		},
@@ -39,13 +55,12 @@ func TestDelete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(mockrepo.Mock{{.ModuleName}}Repository)
-			tt.setupMock(mockRepo)
+			tt.mockBehavior(mock)
 
-			err := mockRepo.Delete(ctx, tt.id)
+			err := implObj.Delete(context.Background(), tt.id)
 
 			assert.Equal(t, tt.expectedErr, err)
-			mockRepo.AssertExpectations(t)
+			assert.Nil(t, mock.ExpectationsWereMet())
 		})
 	}
 }

@@ -4,34 +4,42 @@ import (
 	"context"
 	"errors"
 	"testing"
-
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
+	"github.com/DATA-DOG/go-sqlmock"
 	"{{.ModuleNameRoot}}/internal/outbound/model"
-	mockrepo"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
+	"{{.ModuleNameRoot}}/internal/outbound/db/{{.ModuleNameLower}}"
+	rmodel "{{.ModuleNameRoot}}/pkg/resource/model"
+	"time"
 )
 
 func TestCreate(t *testing.T) {
+	sqlDB, db, mock := {{.ModuleNameLower}}.DbMock(t)
+	defer sqlDB.Close()
+	implObj := New(rmodel.Database{
+		Template: db,
+	})
 	ctx := context.Background()
 
 	tests := []struct {
-		name        string
-		input       *model.Table{{.ModuleName}}
-		setupMock   func(m *mockrepo.Mock{{.ModuleName}}Repository)
-		expectedErr error
-		expectedID  uint64
+		name         string
+		input        *model.Table{{.ModuleName}}
+		mockBehavior func(sqlmock.Sqlmock)
+		expectedErr  error
+		expectedID   uint64
 	}{
 		{
 			name: "Positive case",
 			input: &model.Table{{.ModuleName}}{
 				Name: "Test Name",
 			},
-			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
-				m.On("Create", mock.Anything, mock.AnythingOfType("*model.Table{{.ModuleName}}")).Return(nil).Run(func(args mock.Arguments) {
-					arg := args.Get(1).(*model.Table{{.ModuleName}})
-					arg.ID = 1
-				})
+			mockBehavior: func(mock sqlmock.Sqlmock) {
+				addRow := sqlmock.NewRows([]string{"created_at", "updated_at", "id"}).
+                AddRow(time.Now(), time.Now(), 1)
+                mock.ExpectBegin()
+                mock.ExpectQuery(`INSERT INTO "{{.ModuleNameLower}}" \("name"\) VALUES \(\$1\) RETURNING "created_at","updated_at","id"`).
+                    WithArgs("Test Name").
+                	WillReturnRows(addRow)
+                mock.ExpectCommit()
 			},
 			expectedErr: nil,
 			expectedID:  1,
@@ -41,8 +49,12 @@ func TestCreate(t *testing.T) {
 			input: &model.Table{{.ModuleName}}{
 				Name: "Test Name",
 			},
-			setupMock: func(m *mockrepo.Mock{{.ModuleName}}Repository) {
-				m.On("Create", mock.Anything, mock.AnythingOfType("*model.Table{{.ModuleName}}")).Return(errors.New("database error"))
+			mockBehavior: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+                mock.ExpectQuery(`INSERT INTO "{{.ModuleNameLower}}" \("name"\) VALUES \(\$1\) RETURNING "created_at","updated_at","id"`).
+                    WithArgs("Test Name").
+                	WillReturnError(errors.New("database error"))
+                mock.ExpectRollback()
 			},
 			expectedErr: errors.New("database error"),
 			expectedID:  0,
@@ -51,21 +63,20 @@ func TestCreate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(mockrepo.Mock{{.ModuleName}}Repository)
-			tt.setupMock(mockRepo)
+			tt.mockBehavior(mock)
 
-			err := mockRepo.Create(ctx, tt.input)
+			err := implObj.Create(ctx, tt.input)
 
 			if tt.expectedErr != nil {
-				assert.Equal(t, tt.expectedErr, err, "expected error did not match")
-				assert.Zero(t, tt.input.ID, "expected ID to be zero")
-			} else {
-				require.NoError(t, err, "expected no error")
-				require.NotZero(t, tt.input.ID, "expected ID to be set")
-				assert.Equal(t, tt.expectedID, tt.input.ID, "expected ID did not match")
-			}
+            	assert.Error(t, err)
+            } else {
+            	assert.NoError(t, err)
+            	assert.Equal(t, tt.expectedID, tt.input.ID)
+            }
 
-			mockRepo.AssertExpectations(t)
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("there were unfulfilled expectations: %s", err)
+			}
 		})
 	}
 }

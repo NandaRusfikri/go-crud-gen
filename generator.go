@@ -39,6 +39,7 @@ func Generate(moduleName, outputDir string) error {
 
 		"usecase_create_test": "templates/usecase/module/impl/create_test.go.tpl",
 		"usecase_get_test":    "templates/usecase/module/impl/get_test.go.tpl",
+		"usecase_update_test": "templates/usecase/module/impl/update_test.go.tpl",
 	}
 
 	moduleNameRoot := GetModuleNameRoot()
